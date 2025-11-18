@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype A – Queue System</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container {
+        background: #fff; max-width: 420px; margin: auto; padding: 20px;
+        border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+        width: 100%; padding: 12px; margin: 10px 0;
+        border-radius: 8px; border: 1px solid #ccc;
+    }
+    button { background: #006f3c; color: white; border: none; font-weight: bold; cursor: pointer; }
+    .ticket { margin-top: 20px; padding: 15px; background: #e8ffe8; border-left: 5px solid #006f3c; display: none; }
+    .bar { width: 100%; background: #ddd; height: 12px; border-radius: 20px; margin-top: 10px; }
+    .fill { height: 12px; background: #006f3c; width: 0%; border-radius: 20px; transition: width 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Queue System – Prototype A</h2>
+
+    <input id="name" placeholder="Full Name">
+    <input id="studentNo" placeholder="Student Number">
+    <input id="courseYear" placeholder="Course & Year">
+    <select id="concern">
+        <option disabled selected>Select Concern</option>
+        <option>Tuition / Billing</option>
+        <option>Certificate / Document Request</option>
+        <option>Technical Issue</option>
+    </select>
+    <button onclick="generateTicket()">Generate Ticket</button>
+
+    <div id="ticket" class="ticket">
+        <h3>Your Ticket Number: <strong id="ticketNum"></strong></h3>
+        <p>Department: <strong id="dept"></strong></p>
+        <p>People ahead of you: <strong id="queueCount"></strong></p>
+        <p>Estimated wait: <strong id="waitTime"></strong> minutes</p>
+
+        <div class="bar"><div id="fillBar" class="fill"></div></div>
+    </div>
+</div>
+
+<script>
+let queue = 0;
+let interval;
+
+function generateTicket() {
+    queue = Math.floor(Math.random() * 15) + 5; // 5–20 ahead
+    const concern = document.getElementById("concern").value;
+    const ticketNumber = "T" + Math.floor(1000 + Math.random() * 9000);
+
+    let dept = "";
+    if (concern === "Tuition / Billing") dept = "Accounting Office";
+    if (concern === "Certificate / Document Request") dept = "Records Office";
+    if (concern === "Technical Issue") dept = "ICTO";
+
+    document.getElementById("ticketNum").textContent = ticketNumber;
+    document.getElementById("dept").textContent = dept;
+
+    updateQueue();
+    clearInterval(interval);
+    interval = setInterval(updateQueue, 5000);
+
+    document.getElementById("ticket").style.display = "block";
+}
+
+function updateQueue() {
+    if (queue <= 0) {
+        document.getElementById("queueCount").textContent = "0";
+        document.getElementById("waitTime").textContent = "0";
+        document.getElementById("fillBar").style.width = "100%";
+        clearInterval(interval);
+        return;
+    }
+
+    document.getElementById("queueCount").textContent = queue;
+    document.getElementById("waitTime").textContent = queue * 1.5; // 1.5 min per student
+    document.getElementById("fillBar").style.width = `${100 - (queue * 5)}%`;
+
+    queue--;
+}
+</script>
+
+</body>
+</html>
